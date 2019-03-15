@@ -40,7 +40,7 @@ Moon moon;
 void setup()
 {
   size(800, 800);
-  colorMode(HSB, 360, 100, 100, 100);
+  colorMode(HSB, 360.0, 100.0, 100.0, 100.0);
 
   hs1 = new HScrollbar(0, 12, width, 16, 16, true);
   hs2 = new HScrollbar(0, 34, width, 16, 16, true);
@@ -68,12 +68,14 @@ void draw()
   background_light = min(82.0, sun.Light + moon.Light);
   background(background_hue, background_satur, background_light);
 
+  /*
   pmouseX = pclientX;
   pmouseY = pclientY;
   mouseX = clientX;
   mouseY = clientY;
   mousePressed = pressedMouse;
   hslSetColor(background_hue, background_satur, background_light);
+  */
 
   sun.drawSelf();
   moon.drawSelf();
@@ -219,7 +221,7 @@ class Branch extends PhysicsObj
   ArrayList<Branch> sub_branches = new ArrayList<Branch>();
   ArrayList<Leaf> my_leaves = new ArrayList<Leaf>();
 
-  public Branch(PVector start, PVector end)
+  Branch(PVector start, PVector end)
   {
     this.start = start;
     this.end = end;
@@ -235,7 +237,7 @@ class Branch extends PhysicsObj
     angle = map(hs3.getPos(), 1.0, width, 0.0, PI / 2);
   }
 
-  public void grow(Tree source)
+  void grow(Tree source)
   {
     PVector dir_ = PVector.sub(this.end, this.start);
     if(dir_.mag() < min_grown_length)
@@ -266,7 +268,7 @@ class Branch extends PhysicsObj
     this.sub_branches.add(newBranchB);
   }
 
-  public ArrayList<Branch> get_all_sub_branches()
+  ArrayList<Branch> get_all_sub_branches()
   {
     ArrayList<Branch> retval = new ArrayList<Branch>();
     for(Branch branch : this.sub_branches)
@@ -280,7 +282,7 @@ class Branch extends PhysicsObj
     return retval;
   }
 
-  public void setAcceleration()
+  void setAcceleration()
   {
     float x_offset_acc = (this.default_end.x - this.end.x) * this.friction * this.default_len;
     float y_offset_acc = (this.default_end.y - this.end.y) * this.friction * this.default_len;
@@ -297,7 +299,7 @@ class Branch extends PhysicsObj
     }
   }
 
-  public void applySpeed()
+  void applySpeed()
   {
     this.SpeedX += this.AccX * dt / this.default_len;
     this.SpeedY += this.AccY * dt / this.default_len;
@@ -323,12 +325,12 @@ class Branch extends PhysicsObj
     this.end.add(PVector.sub(b_false_vector, b_old_vector));
   }
 
-  public void setColor()
+  void setColor()
   {
     this.Color = color(42.0, sun.Light * 0.5, min(100.0, sun.Light + moon.Light) * 0.5);
   }
 
-  public void drawSelf()
+  void drawSelf()
   {
     stroke(this.Color);
     line(start.x, start.y, end.x, end.y);
@@ -346,7 +348,7 @@ class Drop extends PhysicsObj
   float alpha;
   float Length = 0;
 
-  public Drop(PVector pos)
+  Drop(PVector pos)
   {
     super(pos);
     this.reset();
@@ -355,7 +357,7 @@ class Drop extends PhysicsObj
     this.unique_number = unique_raindrop_number++;
   }
 
-  public void reset()
+  void reset()
   {
     this.z = random(0.0, 20.0);
 
@@ -373,7 +375,7 @@ class Drop extends PhysicsObj
     this.SpeedY = this.z;
   }
 
-  public void setAcceleration()
+  void setAcceleration()
   {
     this.AccX = -this.SpeedX * airFriction * this.Length + wind_acc_x;
     this.AccY = gravity - this.SpeedY * airFriction * this.Length + wind_acc_y;
@@ -388,7 +390,7 @@ class Drop extends PhysicsObj
     }
   }
 
-  public void applySpeed()
+  void applySpeed()
   {
     this.SpeedX += this.AccX * dt / this.Length;
     this.SpeedY += this.AccY * dt / this.Length;
@@ -397,7 +399,7 @@ class Drop extends PhysicsObj
     this.pos.y += this.SpeedY * dt;
   }
 
-  public void stayInCanvas()
+  void stayInCanvas()
   {
     if(this.pos.y > height)
     {
@@ -410,7 +412,7 @@ class Drop extends PhysicsObj
     }
   }
 
-  public void drawSelf()
+  void drawSelf()
   {
     if(this.unique_number <= random_drops)
     {
@@ -426,13 +428,13 @@ class Leaf extends PhysicsObj
 
   int Size = 8;
 
-  public Leaf(PVector pos)
+  Leaf(PVector pos)
   {
     super(pos);
     renderees.add(this);
   }
 
-  public void setAcceleration()
+  void setAcceleration()
   {
     if(falling)
     {
@@ -450,7 +452,7 @@ class Leaf extends PhysicsObj
     }
   }
 
-  public void applySpeed()
+  void applySpeed()
   {
     this.SpeedX += this.AccX * dt / (PI * pow(this.Size / 2, 2));
     this.SpeedY += this.AccY * dt / (PI * pow(this.Size / 2, 2));
@@ -459,7 +461,7 @@ class Leaf extends PhysicsObj
     this.pos.y += this.SpeedY * dt;
   }
 
-  public void stayInCanvas()
+  void stayInCanvas()
   {
     if((this.pos.y + this.Size / 2) > height)
     {
@@ -480,12 +482,12 @@ class Leaf extends PhysicsObj
     }
   }
 
-  public void setColor()
+  void setColor()
   {
     this.Color = color(140.0, sun.Light, min(100.0, sun.Light + moon.Light), 50.0);
   }
 
-  public void drawSelf()
+  void drawSelf()
   {
     stroke(this.Color);
     fill(this.Color);
@@ -497,7 +499,7 @@ class Leaf extends PhysicsObj
     }
   }
 
-  public void fall()
+  void fall()
   {
     PVector old_pos = this.pos;
     this.pos = new PVector();
@@ -527,7 +529,7 @@ class Moon
   float AccX = 0.0;
   float AccY = this.DefaultAccY;
 
-  public void drawSelf()
+  void drawSelf()
   {
     if(mousePressed)
     {
@@ -578,56 +580,82 @@ class Moon
   }
 }
 
+import os
+destination = open("../algorithmicbotany.pde", "w")
+
+path = "./"
+
+source_file = "source.pde"
+
+def parse_file (filepath):
+  _file = open(path+"\\"+filepath)
+  data = _file.readlines()
+  for line in data:
+    if line.find(") != -1:
+      destination.write(line[0:line.find(")]+line[line.find("public")+7:len(line)])
+      continue
+    destination.write(line)
+  destination.write("\n")
+
+parse_file(source_file)
+
+for root, dirs, files in os.walk(path):  
+  for file in files:
+    if (file == "source.pde"):
+      continue
+    parse_file(file)
+
+destination.close()
 class PhysicsObj
 {
   // The current position of this very object.
-  public PVector pos;
+  PVector pos;
 
   // These variables are related to how the object moves. They should be private or restricted really.
-  public float SpeedX = 0.0;
-  public float SpeedY = 0.0;
+  float SpeedX = 0.0;
+  float SpeedY = 0.0;
 
-  public float AccX = 0.0;
-  public float AccY = 0.0;
+  float AccX = 0.0;
+  float AccY = 0.0;
 
   // The very color of our object. It's placed here so we can easily dynamically change it based on lightning.
-  public color Color;
+  color Color;
 
   // Used to flag those objects that are up for deletion.
   boolean deleting;
 
-  public PhysicsObj()
+  PhysicsObj()
   {
   }
 
-  public PhysicsObj(PVector pos)
+  PhysicsObj(PVector pos)
   {
     this.pos = pos;
   }
 
   // Call this function only in draw/threading processing function to process the object.
-  public void process()
+  void process()
   {
     this.setAcceleration();
     this.applySpeed();
     this.stayInCanvas();
   }
 
-  public void render()
+  void render()
   {
     this.setColor();
     this.drawSelf();
   }
 
   // This function should set the acceleration based on all the forces that this object should account for.
-  public void setAcceleration()
+  void setAcceleration()
   {
     this.AccX = 0.0;
     this.AccY = 0.0;
   }
 
   // This function should be overwritten only when special features are added, such as falling off leaves, or such.
-  public void applySpeed()
+  void applySpeed()
   {
     this.SpeedX += this.AccX * dt;
     this.SpeedY += this.AccY * dt;
@@ -637,17 +665,17 @@ class PhysicsObj
   }
 
   // This function should have contents of helping our object staying in canvas. If ever required.
-  public void stayInCanvas()
+  void stayInCanvas()
   {
   }
 
   // Set our color based on light, mostly.
-  public void setColor()
+  void setColor()
   {
   }
 
   // This function is called to draw the object.
-  public void drawSelf()
+  void drawSelf()
   {
   }
 }
@@ -672,7 +700,7 @@ class Sun
   float AccX = 0.0;
   float AccY = this.DefaultAccY;
 
-  public void drawSelf()
+  void drawSelf()
   {
     if(mousePressed)
     {
@@ -721,7 +749,7 @@ class Tree
 
   int grown_times = 0;
 
-  public Tree(float x, float y)
+  Tree(float x, float y)
   {
     this.root = new Branch(new PVector(x, y), new PVector(x, y - map(hs1.getPos(), 1.0, width, 1.0, 200.0)));
     this.root.source = this;
@@ -729,7 +757,7 @@ class Tree
     this.growing_branches.add(root);
   }
 
-  public void Del()
+  void Del()
   {
     for(Branch branch : branches)
     {
@@ -742,7 +770,7 @@ class Tree
     }
   }
 
-  public void grow()
+  void grow()
   {
     if(grown_times > max_grown_times)
     {
@@ -757,3 +785,4 @@ class Tree
     grown_times++;
   }
 }
+
