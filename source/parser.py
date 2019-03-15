@@ -1,26 +1,29 @@
 import os
+import re
 destination = open("../algorithmicbotany.pde", "w")
-
+pattern = re.compile(r'public\s+class')
 path = "./"
 
-source_file = "source.pde"
+def parse (file, destination):
+  with open(file, 'r') as f:
+    lines = f.readlines()
+    for line in lines:
+      if pattern.match(line):
+        destination.write(re.sub('public', '', line))
+      elif line.find("/*~") >= 0:
+        destination.write(line[0:line.find("/*~")] + line[line.find("/*~") + 4:len(line)])
+      elif line.find("~*/") >= 0:
+        destination.write(line[0:line.find("~*/")] + line[line.find("/*~") + 4:len(line)])
+      else:
+        destination.write(line)
 
-def parse_file (filepath):
-  _file = open(path+"\\"+filepath)
-  data = _file.readlines()
-  for line in data:
-    if line.find("public") != -1:
-      destination.write(line[0:line.find("public")]+line[line.find("public")+7:len(line)])
-      continue
-    destination.write(line)
-  destination.write("\n")
 
-parse_file(source_file)
-
+parse ('source.pde', destination)
 for root, dirs, files in os.walk(path):  
   for file in files:
     if (file == "source.pde"):
       continue
-    parse_file(file)
+    parse(file, destination)
+
 
 destination.close()
