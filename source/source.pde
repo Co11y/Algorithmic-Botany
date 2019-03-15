@@ -118,7 +118,7 @@ void draw()
 */
 }
 
-public class HScrollbar {
+class HScrollbar {
   int swidth, sheight;    // width and height of bar
   float xpos, ypos;       // x and y position of bar
   float spos, newspos;    // x position of slider
